@@ -1,5 +1,8 @@
 const cheerio = require('cheerio');
 const { normalizeAuthor } = require('./helpers.js');
+const dotenv = require('dotenv');
+dotenv.config({ path: '../' });
+const BASE_URL = process.env.BASE_URL;
 
 function quoteFormatter(rawData) {
   const $ = cheerio.load(rawData);
@@ -29,14 +32,14 @@ function authorFormatter(rawData) {
 
 function authorNameOnlyFormatter(rawData) {
   const $ = cheerio.load(rawData);
-  const data = [];
+  const data = {};
   $('div.quote').each((i, item) => {
     const name = normalizeAuthor($(item).find('span small.author').text().trim());
-    if (!data.includes(name)) {
-      data.push(name);
+    if (!data[name]) {
+      data[name] = `${BASE_URL}/author/${name}`;
     }
   });
-  return data;
+  return Object.values(data);
 }
 
 module.exports = { quoteFormatter, authorFormatter, authorNameOnlyFormatter };

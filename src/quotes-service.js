@@ -43,11 +43,9 @@ const createService = () => {
 
     } else {
       const scrapedData = await scraper(BASE_URL);
-      let data = authorNameOnlyFormatter(scrapedData);
-
       try {
-        const response = await scrapeAll(data.map(author => `${BASE_URL}/author/${author}`));
-        data = response.reduce((prev, curr) => {
+        const response = await scrapeAll(authorNameOnlyFormatter(scrapedData));
+        const data = response.reduce((prev, curr) => {
             if (curr.status >= 200 && curr.status < 300 && curr.data) {
               prev.push(authorFormatter(curr.data));
             }
